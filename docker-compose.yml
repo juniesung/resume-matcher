@@ -1,0 +1,52 @@
+services:
+
+  # ── Backend ────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend     # The folder Docker uses as the build root.
+      dockerfile: Dockerfile # Which file inside that folder to use.
+    ports:
+      - "8000:8000"          # "HOST:CONTAINER" — your machine's port 8000 forwards
+                             # to the container's port 8000.
+    env_file:
+      - ./backend/.env       # Loads variables (OPENAI_API_KEY, etc.) from this file
+                             # at runtime and injects them as environment variables.
+                             # They never get baked into the image this way.
+
+  # ── Frontend ───────────────────────────────────────────────────────────────
+  frontend:
+    image: node:22-alpine    # Pull the official Node 22 image based on Alpine Linux.
+                             # Alpine is a minimal Linux distro — the image is only
+                             # ~50 MB, vs ~900 MB for the full Node image.
+                             # We use a pre-built image here instead of a Dockerfile
+                             # because the dev setup (vite dev server) is simple enough
+                             # to configure entirely through volumes and a command.
+    working_dir: /app        # All commands inside this container run from /app.
+    volumes:
+      - ./frontend:/app
+        # Mounts your local frontend/ folder into the container at /app.
+        # This is the key to hot reload: when you edit App.jsx on your machine,
+        # Vite inside the container sees the change instantly and refreshes the browser.
+      - frontend_node_modules:/app/node_modules
+        # Named volume for node_modules — this is subtle but important.
+        # Without this, the volume mount above would overwrite /app/node_modules
+        # with your HOST machine's node_modules, which contains Windows binaries.
+        # The named volume keeps a separate, Linux-compatible node_modules that
+        # lives entirely inside Docker, isolated from your host's version.
+    ports:
+      - "5173:5173"          # Vite's default dev server port.
+    command: sh -c "npm install && npm run dev -- --host"
+      # npm install   — installs Linux-compatible packages into the named volume.
+      #                 Runs on every container start; subsequent runs are fast
+      #                 because npm skips packages that are already installed.
+      # npm run dev   — starts the Vite dev server.
+      # -- --host     — the `--` passes the flag through npm to vite.
+      #                 `--host` tells Vite to bind to 0.0.0.0 (all interfaces),
+      #                 not just 127.0.0.1. Without this, the dev server is only
+      #                 reachable from inside the container and you'd see nothing
+      #                 in your browser on localhost:5173.
+
+# Named volumes are managed entirely by Docker (not tied to a path on your host).
+# Docker creates and reuses them across container restarts.
+volumes:
+  frontend_node_modules:
