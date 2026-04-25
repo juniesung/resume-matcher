@@ -1,7 +1,10 @@
 import logging
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv()
 
 from analyzer import analyze
 from parser import extract_text_from_pdf
@@ -16,7 +19,7 @@ app = FastAPI(title="ResumeMatcher API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:5173"],
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
