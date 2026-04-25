@@ -3,30 +3,32 @@ import { useState, useRef } from 'react'
 // ── helpers ───────────────────────────────────────────────────────────────────
 
 function scoreColor(score) {
-  if (score >= 70) return '#22c55e'
-  if (score >= 40) return '#f59e0b'
-  return '#ef4444'
+  if (score >= 70) return '#10b981'
+  if (score >= 40) return '#fbbf24'
+  return '#f87171'
 }
 
 // ── sub-components ────────────────────────────────────────────────────────────
 
 function Spinner() {
   return (
-    <div style={{ textAlign: 'center', padding: '80px 0' }}>
+    <div style={{ textAlign: 'center', padding: '100px 0' }}>
       <div style={{
-        width: 48,
-        height: 48,
-        border: '3px solid #2a2a2a',
-        borderTopColor: '#6366f1',
+        width: 40,
+        height: 40,
+        border: '3px solid rgba(124,58,237,0.2)',
+        borderTopColor: '#7c3aed',
         borderRadius: '50%',
-        animation: 'spin 0.75s linear infinite',
-        margin: '0 auto 22px',
+        animation: 'spin 0.8s linear infinite',
+        margin: '0 auto 24px',
       }} />
-      <p style={{ color: '#f1f1f1', fontSize: 15, fontWeight: 500, margin: '0 0 6px' }}>
+      <p style={{
+        color: '#8b949e',
+        fontSize: 14,
+        margin: 0,
+        animation: 'pulse 2s ease-in-out infinite',
+      }}>
         Analyzing your resume…
-      </p>
-      <p style={{ color: '#888888', fontSize: 13, margin: 0 }}>
-        This usually takes 3–10 seconds
       </p>
     </div>
   )
@@ -36,21 +38,22 @@ function ScoreCard({ score }) {
   const color = scoreColor(score)
   return (
     <div style={{
-      background: '#1a1a1a',
-      border: '1px solid #2a2a2a',
+      background: '#161b22',
+      border: '1px solid #30363d',
       borderRadius: 16,
-      padding: '32px 28px',
+      padding: '28px 24px',
       textAlign: 'center',
-      minWidth: 152,
+      minWidth: 160,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       flexShrink: 0,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
     }}>
       <div style={{
-        fontSize: 72,
-        fontWeight: 700,
+        fontSize: 64,
+        fontWeight: 800,
         color,
         lineHeight: 1,
         letterSpacing: '-0.03em',
@@ -59,28 +62,28 @@ function ScoreCard({ score }) {
         {score}
       </div>
       <div style={{
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: 600,
-        color: '#888888',
-        letterSpacing: '0.12em',
+        color: '#8b949e',
+        letterSpacing: '0.1em',
         textTransform: 'uppercase',
         marginTop: 10,
-        marginBottom: 18,
+        marginBottom: 16,
       }}>
-        Match
+        Match Score
       </div>
       <div style={{
         width: '100%',
-        height: 5,
-        background: '#2a2a2a',
-        borderRadius: 3,
+        height: 4,
+        background: '#1f2937',
+        borderRadius: 2,
         overflow: 'hidden',
       }}>
         <div style={{
           height: '100%',
           width: `${score}%`,
           background: color,
-          borderRadius: 3,
+          borderRadius: 2,
         }} />
       </div>
     </div>
@@ -90,24 +93,25 @@ function ScoreCard({ score }) {
 function MissingKeywords({ keywords }) {
   return (
     <div style={{
-      background: '#1a1a1a',
-      border: '1px solid #2a2a2a',
+      background: '#161b22',
+      border: '1px solid #30363d',
       borderRadius: 16,
-      padding: '28px',
+      padding: '24px',
       flex: 1,
+      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
     }}>
       <p style={{
-        fontSize: 11,
+        fontSize: 13,
         fontWeight: 600,
         letterSpacing: '0.1em',
         textTransform: 'uppercase',
-        color: '#888888',
-        margin: '0 0 14px',
+        color: '#8b949e',
+        margin: '0 0 16px',
       }}>
         Missing Keywords
       </p>
       {keywords.length === 0 ? (
-        <p style={{ color: '#22c55e', fontSize: 14, margin: 0 }}>
+        <p style={{ color: '#10b981', fontSize: 14, margin: 0 }}>
           ✓ Great coverage — no missing keywords found.
         </p>
       ) : (
@@ -116,12 +120,12 @@ function MissingKeywords({ keywords }) {
             <span key={i} style={{
               display: 'inline-flex',
               alignItems: 'center',
-              background: 'rgba(99,102,241,0.12)',
-              border: '1px solid rgba(99,102,241,0.28)',
-              color: '#a5b4fc',
-              borderRadius: 6,
+              background: 'rgba(124,58,237,0.15)',
+              border: '1px solid rgba(124,58,237,0.3)',
+              color: '#a78bfa',
+              borderRadius: 999,
               padding: '4px 12px',
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: 500,
             }}>
               {kw}
@@ -133,84 +137,75 @@ function MissingKeywords({ keywords }) {
   )
 }
 
-function SuggestionCard({ s, index }) {
+function SuggestionCard({ s }) {
   return (
     <div style={{
-      background: '#1a1a1a',
-      border: '1px solid #2a2a2a',
+      background: '#161b22',
+      border: '1px solid #30363d',
+      borderLeft: '3px solid #7c3aed',
       borderRadius: 16,
-      padding: '24px',
+      padding: '20px 24px',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
-        <div style={{
-          width: 26,
-          height: 26,
-          background: 'rgba(99,102,241,0.12)',
-          border: '1px solid rgba(99,102,241,0.28)',
-          borderRadius: 7,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12,
-          fontWeight: 600,
-          color: '#a5b4fc',
-          flexShrink: 0,
-        }}>
-          {index + 1}
-        </div>
-        <span style={{
-          fontSize: 11,
-          fontWeight: 600,
-          color: '#888888',
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-        }}>
-          Bullet Improvement
-        </span>
+      <p style={{
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        color: '#f87171',
+        margin: '0 0 6px',
+      }}>
+        Before
+      </p>
+      <div style={{
+        background: 'rgba(248,113,113,0.1)',
+        borderLeft: '2px solid #f87171',
+        borderRadius: 8,
+        padding: '10px 14px',
+        fontSize: 13,
+        color: '#f0f6fc',
+        lineHeight: 1.6,
+        marginBottom: 12,
+      }}>
+        {s.original}
       </div>
 
-      <div style={{ marginBottom: 10 }}>
-        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#ef4444', opacity: 0.85, margin: '0 0 7px' }}>
-          Before
-        </p>
-        <div style={{
-          background: 'rgba(239,68,68,0.07)',
-          border: '1px solid rgba(239,68,68,0.18)',
-          borderRadius: 9,
-          padding: '12px 14px',
-          fontSize: 14,
-          color: '#fca5a5',
-          lineHeight: 1.65,
-        }}>
-          {s.original}
-        </div>
+      <p style={{
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        color: '#10b981',
+        margin: '0 0 6px',
+      }}>
+        After
+      </p>
+      <div style={{
+        background: 'rgba(16,185,129,0.1)',
+        borderLeft: '2px solid #10b981',
+        borderRadius: 8,
+        padding: '10px 14px',
+        fontSize: 13,
+        color: '#f0f6fc',
+        lineHeight: 1.6,
+        marginBottom: 12,
+      }}>
+        {s.improved}
       </div>
 
-      <div style={{ marginBottom: 14 }}>
-        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#22c55e', opacity: 0.85, margin: '0 0 7px' }}>
-          After
-        </p>
-        <div style={{
-          background: 'rgba(34,197,94,0.07)',
-          border: '1px solid rgba(34,197,94,0.18)',
-          borderRadius: 9,
-          padding: '12px 14px',
-          fontSize: 14,
-          color: '#86efac',
-          lineHeight: 1.65,
-        }}>
-          {s.improved}
-        </div>
-      </div>
-
-      <div>
-        <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#888888', margin: '0 0 7px' }}>
-          Why
-        </p>
-        <p style={{ fontSize: 13, color: '#888888', lineHeight: 1.65, margin: 0 }}>
-          {s.reason}
-        </p>
-      </div>
+      <p style={{
+        fontSize: 11,
+        fontWeight: 600,
+        letterSpacing: '0.1em',
+        textTransform: 'uppercase',
+        color: '#484f58',
+        margin: '0 0 6px',
+      }}>
+        Why
+      </p>
+      <p style={{ fontSize: 13, color: '#8b949e', lineHeight: 1.6, margin: 0 }}>
+        {s.reason}
+      </p>
     </div>
   )
 }
@@ -219,7 +214,7 @@ function SuggestionCard({ s, index }) {
 
 export default function App() {
   const [phase, setPhase] = useState('input') // 'input' | 'loading' | 'results'
-  const [file, setFile]   = useState(null)
+  const [file, setFile]       = useState(null)
   const [jobDesc, setJobDesc] = useState('')
   const [result, setResult]   = useState(null)
   const [error, setError]     = useState(null)
@@ -269,64 +264,102 @@ export default function App() {
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
         *, *::before, *::after { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; background: #0f0f0f; }
+        html, body { margin: 0; padding: 0; background: #0d1117; }
         #root { all: unset; display: block; }
-        textarea { font-family: inherit; }
-        @keyframes spin   { to { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        textarea:focus    { outline: none; border-color: #6366f1 !important; box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important; }
-        .btn-primary      { transition: opacity 0.15s, transform 0.15s; }
-        .btn-primary:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
-        .btn-primary:active:not(:disabled) { transform: translateY(0); }
-        .btn-ghost        { transition: border-color 0.15s, color 0.15s; }
-        .btn-ghost:hover  { border-color: #6366f1 !important; color: #a5b4fc !important; }
-        .drop-zone        { transition: border-color 0.2s, background 0.2s; }
-        .drop-zone:hover  { border-color: #6366f1 !important; }
-        ::placeholder     { color: #444; }
-        ::-webkit-scrollbar       { width: 5px; }
-        ::-webkit-scrollbar-track { background: #1a1a1a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        body, input, textarea, button { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        :root {
+          --bg: #0d1117;
+          --surface: #161b22;
+          --surface-raised: #1f2937;
+          --border: #30363d;
+          --accent: #7c3aed;
+          --accent-light: #a78bfa;
+          --accent-glow: rgba(124,58,237,0.15);
+          --green: #10b981;
+          --green-light: rgba(16,185,129,0.1);
+          --red: #f87171;
+          --red-light: rgba(248,113,113,0.1);
+          --yellow: #fbbf24;
+          --text-primary: #f0f6fc;
+          --text-secondary: #8b949e;
+          --text-muted: #484f58;
+        }
+
+        @keyframes spin    { to { transform: rotate(360deg); } }
+        @keyframes fadeUp  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse   { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
+
+        .drop-zone { transition: all 0.2s ease; }
+        .drop-zone:hover {
+          border-color: var(--accent) !important;
+          background: var(--accent-glow) !important;
+        }
+
+        textarea:focus {
+          outline: none;
+          border-color: var(--accent) !important;
+          box-shadow: 0 0 0 3px var(--accent-glow) !important;
+        }
+
+        .btn-analyze { transition: all 0.2s ease; }
+        .btn-analyze:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-analyze:active:not(:disabled) { transform: translateY(0); }
+
+        .btn-reset { transition: all 0.2s ease; }
+        .btn-reset:hover { background: var(--accent-glow) !important; color: var(--accent-light) !important; }
+
+        ::placeholder { color: var(--text-muted); }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--surface); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#0f0f0f', padding: '52px 20px 96px', color: '#f1f1f1' }}>
-        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+      <div style={{
+        minHeight: '100vh',
+        background: 'var(--bg)',
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '64px 24px 96px',
+        color: 'var(--text-primary)',
+      }}>
+        <div style={{ width: '100%', maxWidth: 860 }}>
 
           {/* ── Header ── */}
-          <header style={{ textAlign: 'center', marginBottom: 52 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
-              <div style={{
-                width: 38,
-                height: 38,
-                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                borderRadius: 11,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 19,
-                flexShrink: 0,
-              }}>
-                ⚡
-              </div>
+          <header style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <span style={{ color: '#7c3aed', fontSize: 20, lineHeight: 1 }}>✦</span>
               <h1 style={{
                 margin: 0,
-                fontSize: 30,
+                fontSize: 28,
                 fontWeight: 700,
-                color: '#f1f1f1',
-                letterSpacing: '-0.025em',
+                letterSpacing: '-0.02em',
                 lineHeight: 1,
+                background: 'linear-gradient(135deg, #a78bfa, #7c3aed)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
               }}>
                 Resume Matcher
               </h1>
             </div>
-            <p style={{ color: '#888888', fontSize: 15, lineHeight: 1.6, maxWidth: 480, margin: '0 auto' }}>
+            <p style={{
+              color: 'var(--text-secondary)',
+              fontSize: 14,
+              lineHeight: 1.6,
+              maxWidth: 440,
+              margin: '0 auto',
+            }}>
               Upload your resume and paste a job description to get an AI‑powered match score and tailored rewrite suggestions.
             </p>
           </header>
 
           {/* ── Input phase ── */}
           {phase === 'input' && (
-            <div style={{ animation: 'fadeUp 0.3s ease both' }}>
+            <div style={{ animation: 'fadeUp 0.4s ease forwards' }}>
 
               {/* Error banner */}
               {error && (
@@ -334,17 +367,17 @@ export default function App() {
                   display: 'flex',
                   alignItems: 'flex-start',
                   gap: 12,
-                  background: 'rgba(239,68,68,0.08)',
-                  border: '1px solid rgba(239,68,68,0.25)',
+                  background: 'var(--red-light)',
+                  border: '1px solid rgba(248,113,113,0.25)',
                   borderRadius: 12,
                   padding: '14px 16px',
                   marginBottom: 20,
                 }}>
-                  <span style={{ color: '#ef4444', fontSize: 16, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>⚠</span>
-                  <p style={{ color: '#fca5a5', fontSize: 14, lineHeight: 1.5, flex: 1, margin: 0 }}>{error}</p>
+                  <span style={{ color: 'var(--red)', fontSize: 15, lineHeight: 1, marginTop: 1, flexShrink: 0 }}>⚠</span>
+                  <p style={{ color: 'var(--red)', fontSize: 14, lineHeight: 1.5, flex: 1, margin: 0 }}>{error}</p>
                   <button
                     onClick={() => setError(null)}
-                    style={{ background: 'none', border: 'none', color: '#888888', fontSize: 20, lineHeight: 1, cursor: 'pointer', padding: 0, flexShrink: 0 }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 18, lineHeight: 1, cursor: 'pointer', padding: 0, flexShrink: 0 }}
                   >
                     ×
                   </button>
@@ -352,7 +385,7 @@ export default function App() {
               )}
 
               {/* Two-column inputs */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
                 {/* PDF drop zone */}
                 <div
@@ -362,13 +395,14 @@ export default function App() {
                   onDragLeave={() => setDragOver(false)}
                   onDrop={onDrop}
                   style={{
-                    background: dragOver ? 'rgba(99,102,241,0.06)' : '#1a1a1a',
-                    border: `2px dashed ${dragOver ? '#6366f1' : file ? '#22c55e' : '#2a2a2a'}`,
+                    background: dragOver ? 'var(--accent-glow)' : 'var(--surface)',
+                    border: `2px dashed ${dragOver ? '#7c3aed' : file ? '#10b981' : '#30363d'}`,
                     borderRadius: 16,
-                    padding: '44px 24px',
+                    padding: '48px 28px',
                     textAlign: 'center',
                     cursor: 'pointer',
                     userSelect: 'none',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                   }}
                 >
                   <input
@@ -378,18 +412,31 @@ export default function App() {
                     style={{ display: 'none' }}
                     onChange={e => setFile(e.target.files[0] ?? null)}
                   />
-                  <div style={{ fontSize: 38, lineHeight: 1, marginBottom: 12 }}>
-                    {file ? '📄' : '⬆️'}
+                  <div style={{
+                    width: 44,
+                    height: 44,
+                    background: file ? 'rgba(16,185,129,0.15)' : 'var(--accent-glow)',
+                    border: `1px solid ${file ? 'rgba(16,185,129,0.3)' : 'rgba(124,58,237,0.3)'}`,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 14px',
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: file ? '#10b981' : '#a78bfa',
+                  }}>
+                    {file ? '✓' : '↑'}
                   </div>
                   {file ? (
                     <>
-                      <p style={{ color: '#22c55e', fontWeight: 600, fontSize: 14, margin: '0 0 4px' }}>{file.name}</p>
-                      <p style={{ color: '#888888', fontSize: 13, margin: 0 }}>{(file.size / 1024).toFixed(0)} KB · click to replace</p>
+                      <p style={{ color: '#10b981', fontWeight: 600, fontSize: 14, margin: '0 0 4px' }}>{file.name}</p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: 0 }}>{(file.size / 1024).toFixed(0)} KB · click to replace</p>
                     </>
                   ) : (
                     <>
-                      <p style={{ color: '#f1f1f1', fontWeight: 600, fontSize: 14, margin: '0 0 5px' }}>Drop your resume here</p>
-                      <p style={{ color: '#888888', fontSize: 13, margin: 0 }}>or click to browse · PDF only</p>
+                      <p style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, margin: '0 0 6px' }}>Drop your resume here</p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 13, margin: 0 }}>or click to browse · PDF only</p>
                     </>
                   )}
                 </div>
@@ -402,19 +449,20 @@ export default function App() {
                     placeholder="Paste the job description here…"
                     style={{
                       flex: 1,
-                      background: '#1a1a1a',
-                      border: '1px solid #2a2a2a',
+                      background: 'var(--surface)',
+                      border: '1px solid var(--border)',
                       borderRadius: 16,
-                      padding: '18px',
-                      color: '#f1f1f1',
+                      padding: '20px',
+                      color: 'var(--text-primary)',
                       fontSize: 14,
-                      lineHeight: 1.65,
+                      lineHeight: 1.6,
                       resize: 'none',
-                      minHeight: 200,
-                      transition: 'border-color 0.2s, box-shadow 0.2s',
+                      minHeight: 180,
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
                     }}
                   />
-                  <p style={{ color: '#555', fontSize: 12, marginTop: 7, textAlign: 'right' }}>
+                  <p style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 8, textAlign: 'right' }}>
                     {jobDesc.length > 0 ? `${jobDesc.length.toLocaleString()} chars` : 'No text yet'}
                   </p>
                 </div>
@@ -422,20 +470,22 @@ export default function App() {
 
               {/* Analyze button */}
               <button
-                className="btn-primary"
+                className="btn-analyze"
                 onClick={runAnalysis}
                 disabled={!ready}
                 style={{
                   width: '100%',
-                  padding: '15px 24px',
-                  background: ready ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : '#1e1e1e',
-                  border: ready ? 'none' : '1px solid #2a2a2a',
+                  padding: '14px 24px',
+                  background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+                  border: 'none',
                   borderRadius: 12,
-                  color: ready ? '#fff' : '#555',
-                  fontSize: 15,
+                  color: '#fff',
+                  fontSize: 14,
                   fontWeight: 600,
                   letterSpacing: '0.01em',
                   cursor: ready ? 'pointer' : 'not-allowed',
+                  opacity: ready ? 1 : 0.4,
+                  boxShadow: ready ? '0 0 24px rgba(124,58,237,0.3)' : 'none',
                 }}
               >
                 {ready ? 'Analyze Resume →' : 'Add a PDF and job description to continue'}
@@ -445,41 +495,41 @@ export default function App() {
 
           {/* ── Loading phase ── */}
           {phase === 'loading' && (
-            <div style={{ animation: 'fadeUp 0.3s ease both' }}>
+            <div style={{ animation: 'fadeUp 0.4s ease forwards' }}>
               <Spinner />
             </div>
           )}
 
           {/* ── Results phase ── */}
           {phase === 'results' && result && (
-            <div style={{ animation: 'fadeUp 0.4s ease both' }}>
+            <div style={{ animation: 'fadeUp 0.4s ease forwards' }}>
 
               {/* Score + keywords row */}
-              <div style={{ display: 'flex', gap: 14, marginBottom: 14, alignItems: 'stretch' }}>
+              <div style={{ display: 'flex', gap: 16, marginBottom: 16, alignItems: 'stretch' }}>
                 <ScoreCard score={result.match_score} />
                 <MissingKeywords keywords={result.missing_keywords} />
               </div>
 
               {/* Suggestions */}
               {result.suggestions.length > 0 && (
-                <div style={{ marginBottom: 14 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-                    <h2 style={{
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                    <p style={{
                       margin: 0,
-                      fontSize: 16,
+                      fontSize: 13,
                       fontWeight: 600,
-                      color: '#f1f1f1',
-                      letterSpacing: '-0.01em',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'var(--text-secondary)',
                     }}>
                       Bullet Improvements
-                    </h2>
+                    </p>
                     <span style={{
-                      background: 'rgba(99,102,241,0.12)',
-                      border: '1px solid rgba(99,102,241,0.28)',
-                      color: '#a5b4fc',
-                      borderRadius: 20,
-                      padding: '2px 9px',
-                      fontSize: 12,
+                      background: '#7c3aed',
+                      color: '#fff',
+                      borderRadius: 999,
+                      padding: '2px 8px',
+                      fontSize: 11,
                       fontWeight: 600,
                     }}>
                       {result.suggestions.length}
@@ -493,22 +543,24 @@ export default function App() {
                 </div>
               )}
 
+              {/* Reset button */}
               <button
-                className="btn-ghost"
+                className="btn-reset"
                 onClick={reset}
                 style={{
-                  width: '100%',
-                  padding: '13px',
+                  padding: '10px 20px',
                   background: 'transparent',
-                  border: '1px solid #2a2a2a',
+                  border: '1px solid #7c3aed',
                   borderRadius: 12,
-                  color: '#888888',
+                  color: '#a78bfa',
                   fontSize: 14,
                   fontWeight: 500,
                   cursor: 'pointer',
+                  display: 'block',
+                  marginLeft: 'auto',
                 }}
               >
-                ← Analyze another resume
+                ← Analyze Another
               </button>
             </div>
           )}
