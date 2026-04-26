@@ -233,7 +233,8 @@ export default function App() {
     fd.append('job_description', jobDesc)
 
     try {
-      const res = await fetch('http://localhost:8000/analyze', { method: 'POST', body: fd })
+      const apiBase = `${window.location.protocol}//${window.location.hostname}:8000`
+      const res = await fetch(`${apiBase}/analyze`, { method: 'POST', body: fd })
       if (!res.ok) {
         const body = await res.json().catch(() => ({}))
         throw new Error(body.detail || `Server returned ${res.status}`)
