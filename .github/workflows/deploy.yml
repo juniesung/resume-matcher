@@ -1,0 +1,86 @@
+name: CI / CD Pipeline
+
+# ── When does this workflow run? ─────────────────────────────────────────────
+# "push" to main — someone merged a PR or pushed directly.
+# "pull_request" targeting main — someone opened a PR.
+#   On PRs we only run tests (the deploy job is skipped — see the `if:` below).
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+
+  # ── Job 1: Test ──────────────────────────────────────────────────────────────
+  # Runs on EVERY push and every PR. If this fails, the deploy job never starts.
+  test:
+    runs-on: ubuntu-latest
+    # "ubuntu-latest" = a fresh GitHub-hosted Ubuntu VM spun up just for this run.
+    # It starts clean every time — no leftover state from a previous run.
+
+    steps:
+      # 1. Check out the code
+      #    Without this, the VM has no files — it's just a blank Ubuntu machine.
+      #    actions/checkout downloads your repo's code into the VM's working dir.
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Install Python 3.11
+      #    GitHub VMs have Python pre-installed, but pinning the version here
+      #    ensures this workflow always uses 3.11 regardless of what GitHub ships.
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 3. Install dependencies
+      #    Same pip install you run locally, but inside the fresh VM.
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      # 4. Run tests
+      #    -v = verbose output (shows each test name as it runs).
+      #    The tests mock both the PDF parser and OpenAI, so no real API key needed.
+      - name: Run tests
+        run: pytest backend/tests/ -v
+
+  # ── Job 2: Deploy ────────────────────────────────────────────────────────────
+  # Only runs when ALL of the following are true:
+  #   1. The "test" job above passed   (needs: test)
+  #   2. The trigger was a real push   (not a pull request preview)
+  #   3. The branch being pushed is main
+  #
+  # This means: PRs run tests but never deploy. Only merging to main deploys.
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      # SSH into EC2 and run the deployment commands.
+      #
+      # appleboy/ssh-action connects to your server, runs the `script` block,
+      # and fails the job if any command in the script returns a non-zero exit code.
+      #
+      # The four secrets below were saved in your GitHub repo's Settings:
+      #   EC2_HOST     — the server's public IPv4 address
+      #   EC2_USERNAME — "ubuntu" (the default user on AWS Ubuntu AMIs)
+      #   EC2_SSH_KEY  — the full contents of your .pem private key file
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/resume-matcher
+
+            # Pull the latest code from the main branch.
+            # Because the repo is public, this needs no credentials.
+            git pull origin main
+
+            # Rebuild and restart all services defined in docker-compose.yml.
+            # --build  = always rebuild the Docker image (picks up code changes)
+            # -d       = detached mode (runs in background, returns control to shell)
+            docker compose up --build -d
